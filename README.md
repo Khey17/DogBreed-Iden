@@ -2,9 +2,10 @@
 
 ####Using Transfer Learning and Tensorflow 2.9 to Classify different Dog Breeds
 
-![image](https://user-images.githubusercontent.com/90310297/228847933-27816024-0dc4-46f4-b9a6-41a51571c042.png)
-
 In this project we're going to be using machine learning to help us identify different breeds of dogs.
+
+![image](https://user-images.githubusercontent.com/90310297/228848430-340caf2d-d8c2-4294-916c-cf6373e81740.png)
+
 
 To do this, we'll be using data from the https://www.kaggle.com/competitions/dog-breed-identification/leaderboard. It consists of a collection of 10000+ labelled images of 120 different dog breeds.
 
