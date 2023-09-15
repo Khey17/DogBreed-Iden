@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from keras.models import load_model
 from keras.preprocessing import image
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
 import os
@@ -16,16 +17,31 @@ model = tf.keras.models.load_model(
 model.make_predict_function()
 
 # Load breed labels from CSV into a dictionary
-breeds = pd.read_csv('./Data/labels.csv')
-breed_dict = dict(enumerate(breeds['breed'].unique()))
+labels = pd.read_csv('./Data/labels.csv')
+np_labels = labels['breed'].to_numpy()
+breeds = np.unique(np_labels)
+
+# Capitalize and remove underscores
+form_breeds = [breed.replace('_', ' ').title() for breed in breeds]
 
 def predict_label(img_path):
     img = image.load_img(img_path, target_size=(224, 224))
     img = image.img_to_array(img) / 255.0
     img = img.reshape(1, 224, 224, 3)
     prediction = model.predict(img)
-    predicted_class = prediction.argmax()
-    return breed_dict[predicted_class]
+    top_3_predicted_classes = np.argpartition(prediction, -3)[-3:]
+    top_3_predicted_classes = top_3_predicted_classes.flatten()[117:120]
+    # Get the corresponding breed names and probabilities
+    top_3_breeds = [form_breeds[i] for i in top_3_predicted_classes]
+    top_3_probabilities = [prediction[0, i] for i in top_3_predicted_classes]
+
+    # Create a list to store the predictions
+    predictions = []
+
+    for breed, probability in zip(top_3_breeds, top_3_probabilities):
+        predictions.append(f"{breed} -> {probability * 100:.2f}%")
+
+    return predictions
 
 # Define routes
 @app.route("/", methods=['GET', 'POST'])
