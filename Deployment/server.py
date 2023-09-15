@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # Load the model and dictionary once when the application starts
 model = tf.keras.models.load_model(
-       ('./models/full-image-set-mobilenetv2-Adam.h5'),
+       ('C:/Users/91779/Documents/Unreal Projects/DogBreed-Iden/20230905-11181693912730-full-image-set-mobilenetv2-Adam.h5'),
        custom_objects={'KerasLayer':hub.KerasLayer}
 )
 model.make_predict_function()
