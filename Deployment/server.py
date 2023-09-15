@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from keras.models import load_model
 from keras.preprocessing import image
 import pandas as pd
@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
 import os
+import PIL
 
 app = Flask(__name__)
 
@@ -66,7 +67,11 @@ def get_output():
 
         prediction = predict_label(img_path)
 
-        return render_template("index.html", prediction=prediction, img_filename=img.filename)
+        response_data = {'predictions': prediction}
+
+        return jsonify(response_data)
+
+        # return render_template("index.html", prediction=prediction, img_filename=img.filename)
 
 
 if __name__ == '__main__':
