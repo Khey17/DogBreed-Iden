@@ -7,18 +7,21 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import os
 import PIL
+from flask_cors import CORS 
+
 
 app = Flask(__name__)
-
+CORS(app, resources={r"/submit": {"origins": "*"}})
 # Load the model and dictionary once when the application starts
 model = tf.keras.models.load_model(
-       ('C:/Users/91779/Documents/Unreal Projects/DogBreed-Iden/20230905-11181693912730-full-image-set-mobilenetv2-Adam.h5'),
+       ('../full-image-set-mobilenetv2-Adam.h5'),
        custom_objects={'KerasLayer':hub.KerasLayer}
 )
+
 model.make_predict_function()
 
 # Load breed labels from CSV into a dictionary
-labels = pd.read_csv('./Data/labels.csv')
+labels = pd.read_csv('../Data/labels.csv')
 np_labels = labels['breed'].to_numpy()
 breeds = np.unique(np_labels)
 
@@ -38,10 +41,8 @@ def predict_label(img_path):
 
     # Create a list to store the predictions
     predictions = []
-
     for breed, probability in zip(top_3_breeds, top_3_probabilities):
-        predictions.append(f"{breed} -> {probability * 100:.2f}%")
-
+        predictions.append(f"{breed} -> {probability * 100:.3f}")
     return predictions
 
 # Define routes
@@ -75,4 +76,5 @@ def get_output():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False,host='0.0.0.0')
+
